@@ -34,7 +34,7 @@ void setup()
 
 void loop()
 {
-    if(Serial.available()>0)
+    //if(Serial.available()>0)
     {
         Serial.println("hello world");
     }
