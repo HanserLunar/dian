@@ -30,24 +30,47 @@ void app_main(void)
 
 ///////////////////////levle 2.0//////////////////////////////
 
-#include <Arduino.h>
-#include<driver/uart.h>
-#include<stdio.h>
 
-void setup()
-{
-   Serial.begin(9600);
-}
+#include <stdio.h>
+#include"driver/gpio.h"
+#include"freertos/FreeRTOS.h"
+#include"freertos/task.h"
+#include"esp_system.h"
+#include"driver/uart.h"
+#include"string.h"
+#include"driver/ledc.h"
+#include<esp_log.h>
 
-void loop()
+static const int RX_BUF_SIZE=1024 ;
+#define TXD_PIN (GPIO_NUM_4)
+#define RXD_PIN (GPIO_NUM_5)
+
+void init()
 {
-    //if(Serial.available()>0)
+  uart_config_t uart_struct=
     {
-        Serial.println("hello world");
-    }
+       .baud_rate=115200,
+        .data_bits=UART_DATA_8_BITS,
+        .flow_ctrl=UART_HW_FLOWCTRL_DISABLE,
+        .parity=UART_PARITY_DISABLE,
+        .source_clk=UART_SCLK_APB,
+        .stop_bits=UART_STOP_BITS_1
+    };
+      uart_param_config(UART_NUM_0,&uart_struct);
+      uart_driver_install(UART_NUM_0,RX_BUF_SIZE*2,0,0,NULL,0);
+      uart_set_pin(UART_NUM_0,TXD_PIN,RXD_PIN,UART_PIN_NO_CHANGE,UART_PIN_NO_CHANGE);
+
 }
 
-
+void app_main()
+{
+    init();
+      while(1)
+   {
+    printf("hello world\n");
+    vTaskDelay(2000/portTICK_PERIOD_MS);
+   }
+}
 
 
 
