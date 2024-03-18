@@ -999,13 +999,20 @@ esp_err_t mpu6050_complimentory_filter(mpu6050_handle_t sensor, const mpu6050_ac
     return ESP_OK;
 }
 
+                                                        以上为文件部分
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
+                                               正文  正文  正文  正文  正文  正文  正文  正文  正文  正文  
+                                               正文  正文  正文  正文  正文  正文  正文  正文  正文  正文  
+                                               正文  正文  正文  正文  正文  正文  正文  正文  正文  正文  
+                                               正文  正文  正文  正文  正文  正文  正文  正文  正文  正文  
+                                               正文  正文  正文  正文  正文  正文  正文  正文  正文  正文  
+                                               正文  正文  正文  正文  正文  正文  正文  正文  正文  正文  
+                                               正文  正文  正文  正文  正文  正文  正文  正文  正文  正文  
 
 uint16_t mm=0x68;
 static mpu6050_handle_t mpu6050=NULL;
-//初始化
+//初始化i2c通信
 void init()
 {
   i2c_config_t i2c_struct=
@@ -1020,8 +1027,9 @@ void init()
   };
     i2c_param_config(I2C_NUM_0,&i2c_struct);
    i2c_driver_install(I2C_NUM_0,I2C_MODE_MASTER,0,0,0);
-}
+} 
 
+//初始化 uart
 void init_uatr()
 {
   uart_config_t uart_struct=
@@ -1037,6 +1045,7 @@ void init_uatr()
 
 }
 
+/*此块与读取mpu6050无关，仅属于学习产物（草稿）////////////
 i2c_cmd_handle_t cmd_struct;
 uint8_t data[128];
 static esp_err_t readMessage()
@@ -1066,6 +1075,7 @@ static esp_err_t readMessage()
   //i2c_master_read()
   return ret;
 }
+*/
 
 //mpu初始化
 static void i2c_sensor_mpu6050_init(void)
@@ -1082,7 +1092,7 @@ void app_main()
     mpu6050_acce_value_t acce;
     mpu6050_gyro_value_t gyro;
     mpu6050_temp_value_t temp;
-    complimentary_angle_t angle;
+  
     init();
     i2c_sensor_mpu6050_init();
     mpu6050_get_acce(mpu6050,&acce);
@@ -1094,16 +1104,14 @@ void app_main()
     while(1)
     {
        mpu6050_get_acce(mpu6050,&acce);
-       printf("x =%.2f  y =%.2f  z =%.2f\n",acce.acce_x,acce.acce_y,acce.acce_z);
+       printf(" acce :x =%.2f  y =%.2f  z =%.2f\n",acce.acce_x,acce.acce_y,acce.acce_z);
      
        mpu6050_get_gyro(mpu6050,&gyro);
-       printf("x =%.2f  y =%.2f  z =%.2f\n",gyro.gyro_x,gyro.gyro_y,gyro.gyro_z);
+       printf("gyro :x =%.2f  y =%.2f  z =%.2f\n",gyro.gyro_x,gyro.gyro_y,gyro.gyro_z);
       
        mpu6050_get_temp(mpu6050,&temp);
-       printf("temp is %.2f\n",temp.temp);
-
-       mpu6050_complimentory_filter(mpu6050,&acce,&gyro,&angle);
-       printf("pitch is %.2f   roll is %.2f",angle.pitch,angle.roll);
+       printf("tempreture : %.2f\n",temp.temp);
+       
        vTaskDelay(1000/portTICK_PERIOD_MS);
     }
   
