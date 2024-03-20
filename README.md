@@ -15,10 +15,10 @@
 
 第六天：研究esp32的i2c接口与mpu6050寄存器，大约是通过i2c_master_write_byte()和i2c_master_read_byte()从指定的mpu6050寄存器中读取数据，然而我研究esp32的i2c使用攻略，翻遍全网，感觉仅使用i2c_master_write_byte()和i2c_master_read_byte()等函数仍无法读取mpu6050寄存器，我想是还要用某些函数来调控mpu6050寄存器模式，但我未能找到该函数。最后只好用mpu6050.h文件，相对简单地读取了加速度，角速度，温度等数据，也算是完成任务。
 
-第七天：课业压力大，没时间研究esp32了。
+第七天：课业压力大，没时间研究esp32了。发现之前的printf（）发送hello world与串口无关，再去官网查找相关信息，还好最后还是完成了。
 
 
-                                    以 下 是 程 序
+                                            以 下 是 程 序
  /////////////////////////////////////////////////////////////////level 1///////////////////////////////////////////////////////////////
 
  
@@ -52,44 +52,54 @@ void app_main(void)
 
 
 #include <stdio.h>
-#include"driver/gpio.h"
-#include"freertos/FreeRTOS.h"
-#include"freertos/task.h"
-#include"esp_system.h"
-#include"driver/uart.h"
-#include"string.h"
-#include"driver/ledc.h"
-#include<esp_log.h>
+ #include"driver/gpio.h" 
+ #include"freertos/FreeRTOS.h" 
+ #include"freertos/task.h"
+  #include"esp_system.h" 
+  #include"driver/uart.h" 
+  #include"string.h" 
+  #include"driver/ledc.h"
+   #include<esp_log.h>
 
 static const int RX_BUF_SIZE=1024 ;
-#define TXD_PIN (GPIO_NUM_4)
-#define RXD_PIN (GPIO_NUM_5)
-
-void init()
+ #define TXD_PIN (GPIO_NUM_4)
+ #define RXD_PIN (GPIO_NUM_5)
+void init() 
 {
-  uart_config_t uart_struct=
-    {
-       .baud_rate=115200,
-        .data_bits=UART_DATA_8_BITS,
-        .flow_ctrl=UART_HW_FLOWCTRL_DISABLE,
-        .parity=UART_PARITY_DISABLE,
-        .source_clk=UART_SCLK_APB,
-        .stop_bits=UART_STOP_BITS_1
-    };
-      uart_param_config(UART_NUM_0,&uart_struct);
-      uart_driver_install(UART_NUM_0,RX_BUF_SIZE*2,0,0,NULL,0);
-      uart_set_pin(UART_NUM_0,TXD_PIN,RXD_PIN,UART_PIN_NO_CHANGE,UART_PIN_NO_CHANGE);
 
+     uart_config_t uart_struct= 
+    { 
+        .baud_rate=115200, 
+     .data_bits=UART_DATA_8_BITS,
+     .flow_ctrl=UART_HW_FLOWCTRL_DISABLE, 
+     .parity=UART_PARITY_DISABLE,
+      .source_clk=UART_SCLK_APB, 
+      .stop_bits=UART_STOP_BITS_1 
+      };
+
+      uart_param_config(UART_NUM_0,&uart_struct); 
+      uart_driver_install(UART_NUM_0,RX_BUF_SIZE*2,0,0,NULL,0); 
+      uart_set_pin(UART_NUM_0,TXD_PIN,RXD_PIN,UART_PIN_NO_CHANGE,UART_PIN_NO_CHANGE);
+  
 }
 
 void app_main()
 {
+     
+     uint8_t data[128];
+     int length = 0;
+     char* test_str = "hello world\n";
     init();
-      while(1)
-   {
-    printf("hello world\n");
-    vTaskDelay(2000/portTICK_PERIOD_MS);
-   }
+    while(1)
+    {
+        //往uart寄存器写字符串
+        uart_write_bytes(UART_NUM_0, (const char*)test_str, strlen(test_str));
+         //从uart寄存器读取字符串
+         ESP_ERROR_CHECK(uart_get_buffered_data_len(UART_NUM_0, (size_t*)&length));
+         length = uart_read_bytes(UART_NUM_0, data, length, 100);
+         //延时函数
+          vTaskDelay(2000/portTICK_PERIOD_MS); 
+    }
 }
 
 ////////////////////////////////////////////////////////////////level 2.1/////////////////////////////////////////////////////////////////
