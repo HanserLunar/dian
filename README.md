@@ -43,6 +43,7 @@ void app_main(void)
   #include"string.h" 
   #include"driver/ledc.h"
    #include<esp_log.h>
+#include"mpu6050.h"
 
 static const int RX_BUF_SIZE=1024 ;
  #define TXD_PIN (GPIO_NUM_4)
@@ -86,8 +87,7 @@ void app_main()
 }
 
 ////////////////////////////////////////////////////////////////level 2.1/////////////////////////////////////////////////////////////////
-
-我认为操作mpu6050寄存器部分过于困难，所以选择利用“mpu6050.h”，相对简单的读取加速度，角速度速度等数据
+///////////////////我认为操作mpu6050寄存器部分过于困难，所以选择利用“mpu6050.h”，相对简单的读取加速度，角速度速度等数据////////////////////////
 
 #include <stdio.h>
 #include"driver/gpio.h"
@@ -109,7 +109,7 @@ void app_main()
 #include<esp_log.h>
 #include "driver/i2c.h"
 #include"unity.h"
-
+#include"mpu6050.h"
 
 
                                                正文  正文  正文  正文  正文  正文  正文  正文  正文  正文  
